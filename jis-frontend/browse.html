@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Case records · JIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script>try { document.documentElement.dataset.theme = localStorage.getItem('jis.theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch (e) {}</script>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <a class="brand" href="#search"><span class="mark" data-icon="scale"></span><span><b>JIS</b><small>Judiciary Information System</small></span></a>
+      <div class="label">Case records</div>
+      <nav aria-label="Sections">
+        <a href="#search" data-icon="search">Search past cases</a>
+        <a href="#billing" data-icon="receipt" data-lawyer hidden>Views &amp; balance</a>
+      </nav>
+      <div class="foot">
+        <div class="user-chip"><span class="avatar" data-user-initials></span><span><b data-user-name></b><small data-user-role></small></span></div>
+        <div class="row">
+          <button type="button" data-theme-toggle></button>
+          <button type="button" data-logout data-icon="logout">Sign out</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="content">
+      <header class="topbar">
+        <button type="button" class="menu-btn" data-menu aria-label="Open menu" data-icon="menu"></button>
+        <div class="crumbs"><span data-user-role style="text-transform:capitalize"></span> <span>/</span> <b data-crumb></b></div>
+        <div class="today" data-today></div>
+      </header>
+
+      <main>
+        <section class="page" id="search">
+          <div class="search-hero">
+            <h1>Search past cases</h1>
+            <p>Find closed cases by any keyword: crime type, place, names, or words in a judgment or in the proceedings. Use "quotes" for a phrase and -word to exclude.</p>
+            <form id="search-form" role="search">
+              <span class="input-icon"><span data-icon="search"></span><input name="q" type="search" required placeholder="e.g. theft railway acquitted" aria-label="Keywords" autocomplete="off"></span>
+              <button type="submit">Search</button>
+              <p class="error" aria-live="polite"></p>
+            </form>
+            <div class="hints">Try:
+              <button type="button" data-q="robbery">robbery</button>
+              <button type="button" data-q="acquitted">acquitted</button>
+              <button type="button" data-q="fraud -bail">fraud -bail</button>
+              <button type="button" data-q='"witness unavailable"'>"witness unavailable"</button>
+            </div>
+          </div>
+
+          <div class="notice fee-banner" id="fee-note" data-lawyer hidden></div>
+          <div id="results" aria-live="polite">
+            <p class="empty">Search results appear here. Searching is always free.</p>
+          </div>
+        </section>
+
+        <section class="page" id="billing" hidden>
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Billing</div>
+              <h1>Views &amp; balance</h1>
+              <p>Each time you open a case's full record, the current viewing fee is added to your balance.</p>
+            </div>
+          </div>
+          <div class="tiles">
+            <div class="tile gold"><span class="ti" data-icon="rupee"></span><b id="bal">—</b><span>Balance due</span></div>
+            <div class="tile"><span class="ti" data-icon="eye"></span><b id="count">—</b><span>Cases viewed</span></div>
+            <div class="tile ok"><span class="ti" data-icon="receipt"></span><b id="fee-now">—</b><span>Current fee per view</span></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2><span data-icon="receipt"></span>View history</h2></div>
+            <div id="views"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="case-dialog" aria-labelledby="dlg-title">
+    <div class="dhead">
+      <h2 id="dlg-title">Case</h2>
+      <form method="dialog"><button class="ghost sm">Close</button></form>
+    </div>
+    <div class="dbody" id="dlg-body"></div>
+  </dialog>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/mock.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/browse.js"></script>
+</body>
+</html>

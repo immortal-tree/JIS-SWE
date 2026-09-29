@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · JIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script>try { document.documentElement.dataset.theme = localStorage.getItem('jis.theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch (e) {}</script>
+</head>
+<body>
+  <div class="login">
+    <aside class="login-art">
+      <div class="brand"><span class="mark" data-icon="scale"></span><span><b>JIS</b><small>Judiciary Information System</small></span></div>
+      <div>
+        <h1>The court register, hearings and case records in one place.</h1>
+        <p>Registrars run the docket. Judges and lawyers search the record of past cases.</p>
+        <ul>
+          <li data-icon="filePlus">Register cases and issue CINs</li>
+          <li data-icon="calendar">Schedule hearings in vacant court slots</li>
+          <li data-icon="gavel">Record adjournments, proceedings and judgments</li>
+          <li data-icon="search">Search closed cases by keyword</li>
+        </ul>
+      </div>
+      <p class="fine">Access is limited to court staff, judges and registered lawyers. Every case view by a lawyer is recorded.</p>
+    </aside>
+
+    <div class="login-form">
+      <form id="login" autocomplete="on">
+        <div>
+          <h2>Sign in</h2>
+          <p class="muted small" style="margin:.25rem 0 0">Use the account the court registrar created for you.</p>
+        </div>
+        <label>Username
+          <span class="input-icon"><span data-icon="user"></span><input name="username" required autocomplete="username" autofocus></span>
+        </label>
+        <label>Password
+          <span class="input-icon"><span data-icon="lock"></span><input name="password" type="password" required autocomplete="current-password"></span>
+        </label>
+        <p class="error" aria-live="polite"></p>
+        <div class="actions"><button type="submit">Sign in</button></div>
+        <p class="demo" id="demo" hidden>
+          Mock mode. Try <code>registrar</code>, <code>judge</code> or <code>lawyer</code>,
+          with the same word as password.
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/mock.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    (function () {
+      const { $, onSubmit, api } = JIS;
+      if (JIS.mock) $('#demo').hidden = false;
+      const home = (role) => (role === 'REGISTRAR' ? 'registrar.html' : 'browse.html');
+      const u = JIS.user();
+      if (u) location.replace(home(u.role));
+
+      onSubmit($('#login'), async ({ username, password }) => {
+        const res = await api.login(username, password);
+        sessionStorage.setItem('jis.token', res.token);
+        sessionStorage.setItem('jis.user', JSON.stringify(res.user));
+        location.href = home(res.user.role);
+      });
+    })();
+  </script>
+</body>
+</html>

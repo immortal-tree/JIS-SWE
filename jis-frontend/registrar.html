@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registrar · JIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script>try { document.documentElement.dataset.theme = localStorage.getItem('jis.theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch (e) {}</script>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <a class="brand" href="#dashboard"><span class="mark" data-icon="scale"></span><span><b>JIS</b><small>Judiciary Information System</small></span></a>
+      <div class="label">Court office</div>
+      <nav aria-label="Sections">
+        <a href="#dashboard" data-icon="dashboard">Dashboard</a>
+        <a href="#register" data-icon="filePlus">Register case</a>
+        <a href="#hearings" data-icon="gavel">Hearings</a>
+        <a href="#queries" data-icon="chart">Reports</a>
+      </nav>
+      <div class="label">Administration</div>
+      <nav aria-label="Administration">
+        <a href="#accounts" data-icon="users">Accounts</a>
+        <a href="#calendar" data-icon="calendar">Calendar &amp; fee</a>
+      </nav>
+      <div class="foot">
+        <div class="user-chip"><span class="avatar" data-user-initials></span><span><b data-user-name></b><small data-user-role></small></span></div>
+        <div class="row">
+          <button type="button" data-theme-toggle></button>
+          <button type="button" data-logout data-icon="logout">Sign out</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="content">
+      <header class="topbar">
+        <button type="button" class="menu-btn" data-menu aria-label="Open menu" data-icon="menu"></button>
+        <div class="crumbs">Registrar <span>/</span> <b data-crumb></b></div>
+        <div class="today" data-today></div>
+      </header>
+
+      <main>
+        <!-- ============ Dashboard ============ -->
+        <section class="page" id="dashboard">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow" id="greeting">Welcome</div>
+              <h1>Court overview</h1>
+              <p>Today's docket and the state of the register at a glance.</p>
+            </div>
+            <a class="btn" href="#register" data-icon="filePlus">Register case</a>
+          </div>
+
+          <div class="tiles">
+            <a class="tile skeleton" href="#queries" data-run="q-pending"><span class="ti" data-icon="folder"></span><b id="t-pending">0</b><span>Pending cases</span></a>
+            <a class="tile warn skeleton" href="#queries" data-run="q-date"><span class="ti" data-icon="clock"></span><b id="t-today">0</b><span>Hearings today</span></a>
+            <a class="tile ok skeleton" href="#queries" data-run="q-resolved"><span class="ti" data-icon="fileCheck"></span><b id="t-resolved">0</b><span>Resolved this month</span></a>
+            <a class="tile gold skeleton" href="#calendar"><span class="ti" data-icon="rupee"></span><b id="t-fee">0</b><span>Fee per lawyer view</span></a>
+          </div>
+
+          <div class="grid-3">
+            <div class="card">
+              <div class="card-head">
+                <h2><span data-icon="clock"></span>Today's docket</h2>
+                <span class="small muted" id="dash-today-note"></span>
+              </div>
+              <div id="dash-today"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>Quick actions</h2></div>
+              <div class="quick">
+                <a href="#register" data-icon="filePlus"><span>Register a case<small>Issue a CIN and book the first hearing</small></span></a>
+                <a href="#hearings" data-icon="gavel"><span>Record an outcome<small>Adjourned, held, or judgment</small></span></a>
+                <a href="#queries" data-icon="chart"><span>Run a report<small>Pending, resolved, docket, status</small></span></a>
+                <a href="#accounts" data-icon="users"><span>Manage accounts<small>Judges, lawyers, registrars</small></span></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h2><span data-icon="folder"></span>Recently registered, still pending</h2>
+              <a class="small" href="#queries" data-run="q-pending">All pending cases →</a>
+            </div>
+            <div id="dash-pending"></div>
+          </div>
+        </section>
+
+        <!-- ============ Register case ============ -->
+        <section class="page" id="register" hidden>
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">New matter</div>
+              <h1>Register a case</h1>
+              <p>Every field is required. The CIN is issued on save, and you then assign the first hearing from the vacant slots.</p>
+            </div>
+          </div>
+
+          <form id="case-form" class="card form-card">
+            <fieldset>
+              <legend><span class="step-n">1</span>Defendant</legend>
+              <div class="fields">
+                <label>Full name <input name="defendantName" required autocomplete="off"></label>
+                <label class="wide">Address <input name="defendantAddress" required autocomplete="off"></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="step-n">2</span>Offence</legend>
+              <div class="fields">
+                <label>Crime type
+                  <input name="crimeType" list="crime-types" required placeholder="e.g. Theft">
+                  <datalist id="crime-types">
+                    <option>Theft</option><option>Arson</option><option>Assault</option>
+                    <option>Fraud</option><option>Burglary</option><option>Homicide</option>
+                    <option>Robbery</option><option>Forgery</option><option>Cheating</option>
+                  </datalist>
+                </label>
+                <label>Date committed <input name="crimeDate" type="date" required></label>
+                <label>Location <input name="crimeLocation" required></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="step-n">3</span>Arrest</legend>
+              <div class="fields">
+                <label>Arresting officer <input name="arrestingOfficer" required></label>
+                <label>Date of arrest <input name="arrestDate" type="date" required></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span class="step-n">4</span>Trial</legend>
+              <div class="fields">
+                <label>Presiding judge <input name="presidingJudge" required></label>
+                <label>Public prosecutor <input name="publicProsecutor" required></label>
+                <label>Defence lawyer <input name="defenseLawyer" required></label>
+                <label>Start date <input name="startDate" type="date" required></label>
+                <label>Expected completion <input name="expectedCompletionDate" type="date" required></label>
+              </div>
+            </fieldset>
+            <div class="form-foot">
+              <p class="error" aria-live="polite"></p>
+              <button type="reset" class="ghost">Clear</button>
+              <button type="submit" data-icon="fileCheck">Register case</button>
+            </div>
+          </form>
+
+          <div id="registered" class="card" hidden>
+            <div class="success-head">
+              <span class="ti" data-icon="check"></span>
+              <div><h2 style="margin:0">Case registered</h2><p class="small muted" style="margin:0">Case identification number</p></div>
+            </div>
+            <div class="stamp" id="new-cin"></div>
+            <div class="section-title">First hearing</div>
+            <div id="first-sched"></div>
+            <div class="actions">
+              <button type="button" class="ghost" id="another" data-icon="filePlus">Register another case</button>
+              <a class="btn ghost" id="open-new" href="#hearings" data-icon="arrow">Open this case</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ Hearings ============ -->
+        <section class="page" id="hearings" hidden>
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Case file</div>
+              <h1>Hearings</h1>
+              <p>Open a case to record the outcome of its scheduled hearing, then assign the next date.</p>
+            </div>
+          </div>
+
+          <form id="open-case" class="card inline">
+            <label>Case identification number
+              <span class="input-icon"><span data-icon="search"></span><input name="cin" required placeholder="2026-000001" class="mono" pattern="\d{4}-\d{6}" title="YYYY-NNNNNN" autocomplete="off"></span>
+            </label>
+            <button type="submit" data-icon="arrow">Open case</button>
+            <p class="error" aria-live="polite" style="flex-basis:100%"></p>
+          </form>
+
+          <div id="hearing-area"></div>
+        </section>
+
+        <!-- ============ Queries ============ -->
+        <section class="page" id="queries" hidden>
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Registrar queries (a)–(d)</div>
+              <h1>Reports</h1>
+              <p>Pending cases, cases resolved in a period, the hearings on a date, and the status of one case.</p>
+            </div>
+          </div>
+
+          <div class="queries">
+            <form id="q-pending">
+              <h3><small>a</small>Pending cases</h3>
+              <p class="muted small">Every open case, sorted by CIN.</p>
+              <button type="submit" data-icon="folder">Run report</button>
+            </form>
+            <form id="q-resolved">
+              <h3><small>b</small>Resolved in a period</h3>
+              <label>From <input type="date" name="from" required></label>
+              <label>To <input type="date" name="to" required></label>
+              <button type="submit" data-icon="fileCheck">Run report</button>
+            </form>
+            <form id="q-date">
+              <h3><small>c</small>Hearings on a date</h3>
+              <label>Date <input type="date" name="date" required></label>
+              <button type="submit" data-icon="clock">Run report</button>
+            </form>
+            <form id="q-status">
+              <h3><small>d</small>Status of a case</h3>
+              <label>CIN <input name="cin" required class="mono" placeholder="2026-000001" pattern="\d{4}-\d{6}" title="YYYY-NNNNNN"></label>
+              <button type="submit" data-icon="search">Look up</button>
+            </form>
+          </div>
+
+          <div id="q-result" aria-live="polite"></div>
+        </section>
+
+        <!-- ============ Accounts ============ -->
+        <section class="page" id="accounts" hidden>
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Administration</div>
+              <h1>Accounts</h1>
+              <p>Everyone signs in with their own account. Deleted users cannot sign in; their view history and balance are kept.</p>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="card">
+              <div class="card-head"><h2><span data-icon="users"></span>All users</h2><span class="small muted" id="user-count"></span></div>
+              <div id="users"></div>
+            </div>
+
+            <form id="user-form" class="card">
+              <div class="card-head"><h2><span data-icon="user"></span>New account</h2></div>
+              <div class="fields" style="grid-template-columns:1fr">
+                <label>Role
+                  <select name="role" required>
+                    <option value="JUDGE">Judge</option>
+                    <option value="LAWYER">Lawyer</option>
+                    <option value="REGISTRAR">Registrar</option>
+                  </select>
+                </label>
+                <label>Full name <input name="name" required></label>
+                <label>Username <input name="username" required autocomplete="off" pattern="[A-Za-z0-9_.\-]{3,50}" title="3–50 letters, digits, dot, dash or underscore"></label>
+                <label>Initial password <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+              </div>
+              <p class="error" aria-live="polite"></p>
+              <div class="actions"><button type="submit" data-icon="user">Create account</button></div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ============ Calendar & fee ============ -->
+        <section class="page" id="calendar" hidden>
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Administration</div>
+              <h1>Calendar &amp; fee</h1>
+              <p>A day is open for hearings if it is a working weekday and not a holiday. Changes that would strand a booked hearing are refused.</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <form id="weekdays-form" class="card block">
+                <div class="card-head"><h2><span data-icon="calendar"></span>Working weekdays</h2></div>
+                <div class="checks" id="weekday-checks"></div>
+                <p class="error"></p>
+                <div class="actions"><button type="submit" class="ghost">Save weekdays</button></div>
+              </form>
+
+              <form id="slots-form" class="card block">
+                <div class="card-head"><h2><span data-icon="clock"></span>Daily hearing slots</h2></div>
+                <label><span>Start time of each slot, one per line, e.g. <span class="mono">10:00</span></span>
+                  <textarea name="slots" class="mono" rows="6"></textarea>
+                </label>
+                <p class="error"></p>
+                <div class="actions"><button type="submit" class="ghost">Save slots</button></div>
+              </form>
+            </div>
+
+            <div>
+              <form id="holiday-form" class="card block">
+                <div class="card-head"><h2><span data-icon="calendar"></span>Holidays</h2></div>
+                <div class="inline">
+                  <label>Date <input type="date" name="date" required></label>
+                  <button type="submit" class="ghost">Add holiday</button>
+                </div>
+                <p class="error"></p>
+                <div id="holiday-clash"></div>
+                <div id="holidays" style="margin-top:.75rem"></div>
+              </form>
+
+              <form id="fee-form" class="card block">
+                <div class="card-head"><h2><span data-icon="rupee"></span>Viewing fee for lawyers</h2></div>
+                <p class="small muted" id="fee-now"></p>
+                <div class="inline">
+                  <label>Fee per case viewed (₹) <input name="amount" type="number" min="0" step="0.01" required></label>
+                  <button type="submit" class="ghost">Set fee</button>
+                </div>
+                <p class="small muted" style="margin-top:.6rem">Applies to future views only. Past charges keep the fee they were charged.</p>
+                <p class="error"></p>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <template id="sched-tpl">
+    <form class="sched">
+      <div class="inline">
+        <label>Hearing date <input type="date" name="date" required></label>
+      </div>
+      <p class="small muted" data-hint>Pick a date to see its vacant slots.</p>
+      <div class="slots" role="radiogroup" aria-label="Vacant slots"></div>
+      <p class="error" aria-live="polite"></p>
+      <div class="actions"><button type="submit" disabled>Assign hearing</button></div>
+    </form>
+  </template>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/mock.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/registrar.js"></script>
+</body>
+</html>
